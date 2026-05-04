@@ -8,7 +8,8 @@
     <style>
         body {
             font-family: 'DM Sans', sans-serif;
-            background: #f7f4ef;
+            background: url('{{ asset('guide.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
         }
 

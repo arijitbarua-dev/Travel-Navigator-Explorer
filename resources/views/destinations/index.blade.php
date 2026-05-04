@@ -7,7 +7,7 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-500 via-sky-400 to-blue-300 min-h-screen font-sans flex items-center justify-center"
-      style="background-image: url('https://i.pinimg.com/1200x/70/73/27/707327c07ff1a9666bb6eaa8b1cc279b.jpg'); 
+      style="background-image: url('{{ asset('destination.jpg') }}'); 
              background-size: cover; 
              background-position: center; 
              background-attachment: fixed;">
@@ -42,7 +42,7 @@
     </h1>
 
     <!-- Search + Filter -->
-    <div class="relative backdrop-blur-lg bg-white/80 p-4 rounded-xl shadow-xl">
+    <div class="relative backdrop-blur-xl bg-white/30 border border-white/20 p-4 rounded-xl shadow-xl">
 
         <!-- Search Input -->
         <div class="relative">

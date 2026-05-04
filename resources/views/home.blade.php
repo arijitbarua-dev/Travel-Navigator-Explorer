@@ -34,7 +34,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="relative bg-cover bg-center h-[80vh]" style="background-image: url('https://i.pinimg.com/736x/3f/31/60/3f31601947c498388838683c88aad8c4.jpg');">
+    <section class="relative bg-cover bg-center h-[80vh]" style="background-image: url('{{ asset('frontpage.jpg') }}');">
         <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center text-white p-4">
             <h2 class="text-4xl md:text-6xl font-bold mb-4">Explore Cox's Bazar</h2>
             <p class="text-lg md:text-2xl mb-6">Plan your perfect beach gateway in Bangladesh</p>

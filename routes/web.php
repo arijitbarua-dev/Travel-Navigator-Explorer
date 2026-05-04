@@ -15,6 +15,9 @@ use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CurrencyController;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -38,7 +41,7 @@ Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('
 
 /*
 |--------------------------------------------------------------------------
-| Guides
+| Guides (Code 1 Feature)
 |--------------------------------------------------------------------------
 */
 Route::get('/guides', [GuideController::class, 'index'])->name('guides.index');
@@ -81,7 +84,7 @@ Route::post('/cost/calculate', [RoomController::class, 'calculateCost']);
 
 /*
 |--------------------------------------------------------------------------
-| Travel Budget
+| Travel Budget (Multiple Instances preserved)
 |--------------------------------------------------------------------------
 */
 Route::get('/travel-budget', [RoomController::class, 'travelBudgetForm']);
@@ -99,7 +102,7 @@ Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
 
 /*
 |--------------------------------------------------------------------------
-| Hotels
+| Hotels (Multiple Instances preserved)
 |--------------------------------------------------------------------------
 */
 Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
@@ -122,7 +125,7 @@ Route::get('/admin/logout', [AdminAuthController::class, 'logout']);
 
 /*
 |--------------------------------------------------------------------------
-| Guide Auth
+| Guide Auth (Code 1 Feature)
 |--------------------------------------------------------------------------
 */
 Route::get('/guide/login', [GuideAuthController::class, 'showLogin'])->name('guide.login');
@@ -149,19 +152,16 @@ Route::get('/admin/guides/{id}', [AdminController::class, 'showGuide']);
 Route::get('/admin/guides/{id}/approve', [AdminController::class, 'approveGuide']);
 Route::get('/admin/guides/{id}/reject', [AdminController::class, 'rejectGuide']);
 
+/* Repeated Blocks from your Code files */
 Route::get('/travel-budget', [RoomController::class, 'travelBudgetForm']);
 Route::post('/travel-budget/calculate', [RoomController::class, 'travelBudgetCalculate']);
-
 
 Route::get('/hotels', function () {
     return view('hotels');
 })->name('hotels.index');
 
-
-
 Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
 Route::post('/hotels', [HotelController::class, 'store']);
-
 Route::delete('/hotels/{id}', [HotelController::class, 'destroy']);
 
 /*
@@ -180,9 +180,37 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
+| Guide Booking & Payment (Code 2 & 3 Feature)
+|--------------------------------------------------------------------------
+*/
+Route::get('/booking', [PaymentController::class, 'showBookingForm'])->name('booking.form');
+Route::post('/booking/checkout', [PaymentController::class, 'checkout'])->name('booking.checkout');
+Route::get('/booking/success', [PaymentController::class, 'success'])->name('booking.success');
+Route::get('/booking/cancel', [PaymentController::class, 'cancel'])->name('booking.cancel');
+Route::get('/booking/receipt/{id}', [PaymentController::class, 'receipt'])->name('booking.receipt');
+
+
+/*
+|--------------------------------------------------------------------------
+| Currency Converter (Code 2 & 3 Feature)
+|--------------------------------------------------------------------------
+*/
+Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
+Route::post('/currency/convert', [CurrencyController::class, 'convert'])->name('currency.convert');
+
+
+/*
+|--------------------------------------------------------------------------
 | Dashboard (WITH SEARCH — Option 2)
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', [RoomController::class, 'search'])
     ->middleware('auth')
     ->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Gallery API (Code 2 & 3 Feature)
+|--------------------------------------------------------------------------
+*/
+Route::get('/api/random-destinations', [DestinationController::class, 'random']);
