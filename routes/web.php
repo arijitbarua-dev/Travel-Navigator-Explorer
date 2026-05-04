@@ -9,6 +9,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\Customer\AuthController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CurrencyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -133,6 +135,27 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+/*
+|--------------------------------------------------------------------------
+| Guide Booking & Payment
+|--------------------------------------------------------------------------
+*/
+Route::get('/booking', [PaymentController::class, 'showBookingForm'])->name('booking.form');
+Route::post('/booking/checkout', [PaymentController::class, 'checkout'])->name('booking.checkout');
+Route::get('/booking/success', [PaymentController::class, 'success'])->name('booking.success');
+Route::get('/booking/cancel', [PaymentController::class, 'cancel'])->name('booking.cancel');
+Route::get('/booking/receipt/{id}', [PaymentController::class, 'receipt'])->name('booking.receipt');
+
+
+/*
+|--------------------------------------------------------------------------
+| Currency Converter
+|--------------------------------------------------------------------------
+*/
+Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
+Route::post('/currency/convert', [CurrencyController::class, 'convert'])->name('currency.convert');
 
 
 /*

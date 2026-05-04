@@ -25,8 +25,6 @@
                 <a href="#guides">Guides</a>
                 <a href="{{ route('blogs.index') }}">Blogs</a>
                 <a href="#contact">Contact</a>
-				
-				
             </nav>
 
 
