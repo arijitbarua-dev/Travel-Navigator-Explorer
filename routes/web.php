@@ -9,9 +9,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\Customer\AuthController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\CurrencyController;
-
+use App\Http\Controllers\GuideController;
+use App\Http\Controllers\GuideAuthController;
+use App\Http\Controllers\ExploreController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\MessageController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -32,6 +35,26 @@ Route::get('/', function () {
 Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
 Route::get('/destinations/search', [DestinationController::class, 'search'])->name('destinations.search');
 Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('destinations.show');
+
+/*
+|--------------------------------------------------------------------------
+| Guides
+|--------------------------------------------------------------------------
+*/
+Route::get('/guides', [GuideController::class, 'index'])->name('guides.index');
+Route::get('/guides/apply', [GuideController::class, 'create'])->name('guides.apply');
+Route::post('/guides', [GuideController::class, 'store'])->name('guides.store');
+Route::get('/guides/{id}', [GuideController::class, 'show'])->name('guides.show');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/guides/{id}/hire', [BookingController::class, 'store'])->name('guides.hire');
+    Route::post('/guides/{id}/reviews', [ReviewController::class, 'store'])->name('guides.reviews.store');
+    Route::get('/guides/{id}/chat', [MessageController::class, 'show'])->name('guides.chat');
+    Route::get('/guides/{id}/messages', [MessageController::class, 'index']);
+    Route::post('/guides/{id}/messages', [MessageController::class, 'store']);
+});
+
+Route::get('/explore', [ExploreController::class, 'index'])->name('explore.index');
 
 
 /*
@@ -97,6 +120,20 @@ Route::post('/admin/login', [AdminAuthController::class, 'login']);
 
 Route::get('/admin/logout', [AdminAuthController::class, 'logout']);
 
+/*
+|--------------------------------------------------------------------------
+| Guide Auth
+|--------------------------------------------------------------------------
+*/
+Route::get('/guide/login', [GuideAuthController::class, 'showLogin'])->name('guide.login');
+Route::post('/guide/login', [GuideAuthController::class, 'login']);
+Route::get('/guide/logout', [GuideAuthController::class, 'logout'])->name('guide.logout');
+Route::get('/guide/dashboard', [GuideAuthController::class, 'dashboard'])->name('guide.dashboard');
+Route::get('/guide/booking/confirm/{id}', [GuideAuthController::class, 'confirmBooking'])->name('guide.booking.confirm');
+Route::get('/guide/booking/cancel/{id}', [GuideAuthController::class, 'cancelBooking'])->name('guide.booking.cancel');
+Route::get('/guide/booking/complete/{id}', [GuideAuthController::class, 'completeBooking'])->name('guide.booking.complete');
+Route::get('/guide/chat/{email}', [GuideAuthController::class, 'chatWithGuest'])->name('guide.chat.with.guest');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +144,10 @@ Route::get('/admin/dashboard', [AdminController::class, 'index']);
 Route::get('/admin/room/{id}', [AdminController::class, 'show']);
 Route::get('/admin/approve/{id}', [AdminController::class, 'approve']);
 Route::get('/admin/reject/{id}', [AdminController::class, 'reject']);
+Route::get('/admin/guides', [AdminController::class, 'guides']);
+Route::get('/admin/guides/{id}', [AdminController::class, 'showGuide']);
+Route::get('/admin/guides/{id}/approve', [AdminController::class, 'approveGuide']);
+Route::get('/admin/guides/{id}/reject', [AdminController::class, 'rejectGuide']);
 
 Route::get('/travel-budget', [RoomController::class, 'travelBudgetForm']);
 Route::post('/travel-budget/calculate', [RoomController::class, 'travelBudgetCalculate']);
@@ -139,36 +180,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Guide Booking & Payment
-|--------------------------------------------------------------------------
-*/
-Route::get('/booking', [PaymentController::class, 'showBookingForm'])->name('booking.form');
-Route::post('/booking/checkout', [PaymentController::class, 'checkout'])->name('booking.checkout');
-Route::get('/booking/success', [PaymentController::class, 'success'])->name('booking.success');
-Route::get('/booking/cancel', [PaymentController::class, 'cancel'])->name('booking.cancel');
-Route::get('/booking/receipt/{id}', [PaymentController::class, 'receipt'])->name('booking.receipt');
-
-
-/*
-|--------------------------------------------------------------------------
-| Currency Converter
-|--------------------------------------------------------------------------
-*/
-Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
-Route::post('/currency/convert', [CurrencyController::class, 'convert'])->name('currency.convert');
-
-
-/*
-|--------------------------------------------------------------------------
 | Dashboard (WITH SEARCH — Option 2)
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', [RoomController::class, 'search'])
     ->middleware('auth')
     ->name('dashboard');
-
-
-
-//gallery add
-
-Route::get('/api/random-destinations', [DestinationController::class, 'random']);
