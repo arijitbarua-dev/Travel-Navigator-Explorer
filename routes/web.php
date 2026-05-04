@@ -148,6 +148,10 @@ Route::get('/booking/success', [PaymentController::class, 'success'])->name('boo
 Route::get('/booking/cancel', [PaymentController::class, 'cancel'])->name('booking.cancel');
 Route::get('/booking/receipt/{id}', [PaymentController::class, 'receipt'])->name('booking.receipt');
 
+Route::get('/booking/payment', [PaymentController::class, 'dummyCheckout'])->name('booking.dummy');
+Route::post('/booking/payment/process', [PaymentController::class, 'dummyProcess'])->name('booking.dummy.process');
+
+
 
 /*
 |--------------------------------------------------------------------------

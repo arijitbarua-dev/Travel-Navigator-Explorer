@@ -67,16 +67,6 @@ class PaymentController extends Controller
 
         $secretKey = config('services.stripe.secret');
 
-        // BYPASS STRIPE FOR LOCAL TESTING IF PLACEHOLDER KEY IS DETECTED
-        if (str_contains($secretKey, 'your_secret_key_here')) {
-            $booking->update([
-                'status' => 'confirmed',
-                'stripe_session_id' => 'mock_session_' . uniqid(),
-                'stripe_payment_intent_id' => 'mock_pi_' . uniqid(),
-            ]);
-            return redirect(route('booking.success') . '?booking_id=' . $booking->id);
-        }
-
         // Create Stripe Checkout Session
         Stripe::setApiKey($secretKey);
 
@@ -125,7 +115,7 @@ class PaymentController extends Controller
         $booking = Booking::with('guide')->findOrFail($request->query('booking_id'));
         $secretKey = config('services.stripe.secret');
 
-        if ($request->query('session_id') && !str_contains($secretKey, 'your_secret_key_here')) {
+        if ($request->query('session_id')) {
             try {
                 Stripe::setApiKey($secretKey);
                 $session = StripeSession::retrieve($request->query('session_id'));
@@ -170,5 +160,34 @@ class PaymentController extends Controller
     {
         $booking = Booking::with('guide')->findOrFail($id);
         return view('booking_receipt', compact('booking'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dummy Payment Checkout (Local Bypass)
+    |--------------------------------------------------------------------------
+    */
+    public function dummyCheckout(Request $request)
+    {
+        $booking = Booking::with('guide')->findOrFail($request->query('booking_id'));
+        return view('stripe_dummy', compact('booking'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dummy Payment Process (Local Bypass)
+    |--------------------------------------------------------------------------
+    */
+    public function dummyProcess(Request $request)
+    {
+        $booking = Booking::findOrFail($request->booking_id);
+        
+        $booking->update([
+            'status' => 'confirmed',
+            'stripe_session_id' => 'mock_session_' . uniqid(),
+            'stripe_payment_intent_id' => 'mock_pi_' . uniqid(),
+        ]);
+        
+        return redirect(route('booking.success') . '?booking_id=' . $booking->id);
     }
 }
