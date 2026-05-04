@@ -20,9 +20,9 @@
 <body class="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100 text-slate-800 pt-20" style="background-image: url('{{ asset('guide/bg.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
 
     <!-- Navbar -->
-    <header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-3xl bg-gradient-to-r from-white/40 via-blue-100/30 to-cyan-100/30 border border-white/60 shadow-2xl">
+    <header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-xl bg-white/30 border border-white/20 shadow-2xl">
         <div class="container mx-auto flex justify-between items-center px-6 py-3 relative z-10">
-            <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-300 via-cyan-200 to-blue-300 opacity-30 blur-3xl pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 opacity-20 blur-3xl pointer-events-none"></div>
 
             <h1 class="relative text-2xl font-extrabold text-blue-600">
                 Travel<span class="text-gray-800">Navigator</span>
@@ -42,8 +42,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto p-4 pt-24">
-        <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
-            <section class="bg-white/55 backdrop-blur-3xl border border-white/70 rounded-3xl shadow-2xl p-6">
+        <div class="grid gap-6 lg:grid-cols-[420px_1fr]">
+            <section class="backdrop-blur-xl bg-white/30 border border-white/20 rounded-3xl shadow-2xl p-6 h-[520px] overflow-y-auto">
                 <h1 class="text-4xl font-bold text-slate-900">Explore Nearby Places</h1>
                 <p class="mt-3 text-slate-600">Search for restaurants, parks, hills, beaches or any place near you with Google Maps.</p>
 
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <div class="grid gap-3 sm:grid-cols-2">
+                    <div class="grid gap-3 grid-cols-1">
                         <button data-query="restaurants" class="explore-chip rounded-3xl bg-white/80 border border-slate-200 px-4 py-3 text-slate-800 font-semibold hover:bg-cyan-50 transition">Restaurants</button>
                         <button data-query="park" class="explore-chip rounded-3xl bg-white/80 border border-slate-200 px-4 py-3 text-slate-800 font-semibold hover:bg-cyan-50 transition">Park</button>
                         <button data-query="beach" class="explore-chip rounded-3xl bg-white/80 border border-slate-200 px-4 py-3 text-slate-800 font-semibold hover:bg-cyan-50 transition">Beach</button>
@@ -216,7 +216,7 @@
 
                 // Add to results list
                 const card = document.createElement('div');
-                card.className = 'place-card rounded-3xl border border-slate-200/70 bg-white/90 p-4 shadow-sm hover:shadow-lg cursor-pointer';
+                card.className = 'place-card rounded-3xl border border-slate-200/70 bg-white/90 p-4 shadow-sm hover:shadow-lg cursor-pointer min-h-[80px] flex flex-col justify-between';
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-3">
                         <div>
