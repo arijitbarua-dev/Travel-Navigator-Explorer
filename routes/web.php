@@ -143,3 +143,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [RoomController::class, 'search'])
     ->middleware('auth')
     ->name('dashboard');
+
+
+
+//gallery add
+
+Route::get('/api/random-destinations', [DestinationController::class, 'random']);
