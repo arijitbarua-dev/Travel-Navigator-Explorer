@@ -53,4 +53,10 @@ class DestinationController extends Controller
 
         return view('destinations.show', compact('destination', 'related'));
     }
+    public function random()
+{
+    $destinations = Destination::inRandomOrder()->take(4)->get();
+
+    return response()->json($destinations);
+}
 }

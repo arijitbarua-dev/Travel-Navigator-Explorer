@@ -20,28 +20,32 @@
 
             <nav class="hidden md:flex items-center space-x-8 text-gray-700">
                 <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('destinations.index') }}">Destinations</a>
-                <a href="{{ route('guides.index') }}">Guides</a>
-                <a href="{{ route('explore.index') }}">Explore</a>
+                <a href="{{ route('guides.index') }}">Book Guide</a>
+                <a href="{{ route('currency.index') }}">Currency</a>
                 <a href="{{ route('blogs.index') }}">Blogs</a>
                 <a href="{{ route('home') }}#contact">Contact</a>
-				
-				
             </nav>
 
+            <div class="flex items-center space-x-4">
+                @auth
+                    <span class="text-gray-700 font-semibold">
+                        {{ auth()->user()->name }}
+                    </span>
 
-
-            <!-- ✅ Explore + Guide Login -->
-            <div class="hidden md:flex items-center space-x-3">
-                <a href="{{ route('guide.login') }}" class="px-5 py-2 text-slate-900 bg-white rounded-full shadow-lg hover:bg-slate-100 transition transform hover:-translate-y-1 hover:scale-105">
-                    Guide Login
-                </a>
-                <a href="{{ route('login') }}" class="px-5 py-2 text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 hover:scale-105">
-                    Get Started
-                </a>
-                <a href="{{ route('guides.apply') }}" class="px-5 py-2 text-blue-600 bg-white rounded-full shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-1 hover:scale-105">
-                    Become a Guide
-                </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('guide.login') }}" class="px-5 py-2 text-slate-900 bg-white rounded-full shadow-lg hover:bg-slate-100 transition transform hover:-translate-y-1 hover:scale-105">
+                        Guide Login
+                    </a>
+                    <a href="{{ route('guides.apply') }}" class="px-5 py-2 text-blue-600 bg-white rounded-full shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-1 hover:scale-105">
+                        Become a Guide
+                    </a>
+                @endauth
             </div>
 
             <button class="md:hidden text-2xl">☰</button>

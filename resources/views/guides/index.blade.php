@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100 text-slate-800 pt-20" style="background-image: url('{{ asset('guide/bg.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+<body class="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100 text-slate-800 pt-20" style="background-image: url('{{ asset('guide.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
 
     <!-- Navbar -->
-    <header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-3xl bg-gradient-to-r from-white/40 via-blue-100/30 to-cyan-100/30 border border-white/60 shadow-2xl">
+    <header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-xl bg-white/30 border border-white/20 shadow-2xl">
         <div class="container mx-auto flex justify-between items-center px-6 py-3 relative z-10">
             
-            <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-300 via-cyan-200 to-blue-300 opacity-30 blur-3xl pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 opacity-20 blur-3xl pointer-events-none"></div>
 
             <h1 class="relative text-2xl font-extrabold text-blue-600">
                 Travel<span class="text-gray-800">Navigator</span>
@@ -21,30 +21,33 @@
 
             <nav class="hidden md:flex items-center space-x-8 text-gray-700">
                 <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('destinations.index') }}">Destinations</a>
-                <a href="{{ route('guides.index') }}">Guides</a>
-                <a href="{{ route('explore.index') }}">Explore</a>
+                <a href="{{ route('guides.index') }}">Book Guide</a>
+                <a href="{{ route('currency.index') }}">Currency</a>
                 <a href="{{ route('blogs.index') }}">Blogs</a>
                 <a href="{{ route('home') }}#contact">Contact</a>
-				
-				
             </nav>
 
+            <div class="flex items-center space-x-4">
+                @auth
+                    <span class="text-gray-700 font-semibold">
+                        {{ auth()->user()->name }}
+                    </span>
 
-
-            <!-- ✅ Get Started + Guide Login -->
-            <div class="hidden md:flex items-center space-x-3">
-                <a href="{{ route('guide.login') }}" class="px-5 py-2 text-slate-900 bg-white rounded-full shadow-lg hover:bg-slate-100 transition transform hover:-translate-y-1 hover:scale-105">
-                    Guide Login
-                </a>
-                <a href="{{ route('login') }}" class="px-5 py-2 text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 hover:scale-105">
-                    Get Started
-                </a>
-                <a href="{{ route('guides.apply') }}" class="px-5 py-2 text-blue-600 bg-white rounded-full shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-1 hover:scale-105">
-                    Become a Guide
-                </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('guide.login') }}" class="px-5 py-2 text-slate-900 bg-white rounded-full shadow-lg hover:bg-slate-100 transition transform hover:-translate-y-1 hover:scale-105">
+                        Guide Login
+                    </a>
+                    <a href="{{ route('guides.apply') }}" class="px-5 py-2 text-blue-600 bg-white rounded-full shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-1 hover:scale-105">
+                        Become a Guide
+                    </a>
+                @endauth
             </div>
-
             <button class="md:hidden text-2xl">☰</button>
         </div>
     </header>
