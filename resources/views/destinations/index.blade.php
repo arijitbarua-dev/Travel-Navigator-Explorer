@@ -24,12 +24,7 @@
 
             @include('partials.navbar')
 
-            <!-- ✅ Only Get Started Button remains -->
-            <div class="hidden md:flex space-x-4">
-                <a href="#" class="px-5 py-2 text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 hover:scale-105">
-                    Get Started
-                </a>
-            </div>
+
 
             <button class="md:hidden text-2xl">☰</button>
         </div>
