@@ -71,6 +71,10 @@ Route::get('/rooms/delete/{id}', [RoomController::class, 'delete']);
 Route::get('/rooms/edit/{id}', [RoomController::class, 'edit']);
 Route::post('/rooms/update/{id}', [RoomController::class, 'update']);
 Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
+Route::get('/room/booking', [RoomController::class, 'bookingForm'])->name('room.booking');
+Route::post('/room/checkout', [RoomController::class, 'checkout'])->name('room.checkout');
+Route::get('/room/success', [RoomController::class, 'success'])->name('room.success');
+Route::get('/room/receipt', [RoomController::class, 'receipt'])->name('room.receipt');
 
 
 /*

@@ -78,6 +78,109 @@ class RoomController extends Controller
         return view('room', compact('room'));
     }
 
+    public function bookingForm(Request $request)
+    {
+        $room = Room::findOrFail($request->room_id);
+        return view('room_booking', compact('room'));
+    }
+
+    public function checkout(Request $request)
+    {
+        $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $room = Room::findOrFail($request->room_id);
+        
+        $startDate = new \DateTime($request->start_date);
+        $endDate   = new \DateTime($request->end_date);
+        $numDays   = $startDate->diff($endDate)->days;
+
+        if ($numDays < 1) {
+            return redirect()->back()->with('error', 'Minimum booking is 1 night.');
+        }
+
+        $totalAmount = $room->price * $numDays;
+
+        $secretKey = config('services.stripe.secret') ?: env('STRIPE_SECRET');
+        \Stripe\Stripe::setApiKey($secretKey);
+
+        $totalInUsd = round($totalAmount / 110, 2);
+        $totalInCents = (int) round($totalInUsd * 100);
+        if ($totalInCents < 50) {
+            $totalInCents = 50;
+        }
+
+        try {
+            $session = \Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency'     => 'usd',
+                        'product_data' => [
+                            'name'        => 'Room Booking: ' . $room->name,
+                            'description' => $numDays . ' night(s)',
+                        ],
+                        'unit_amount' => $totalInCents,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode'        => 'payment',
+                'success_url' => route('room.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url'  => route('dashboard') . '?payment=cancelled',
+                'metadata' => [
+                    'type' => 'room',
+                    'room_id' => $room->id,
+                    'room_name' => $room->name,
+                    'price' => $totalAmount,
+                    'nights' => $numDays,
+                    'customer_email' => auth()->user()->email ?? 'guest@example.com',
+                    'customer_name' => auth()->user()->name ?? 'Guest',
+                ],
+            ]);
+
+            return redirect($session->url);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Payment failed: ' . $e->getMessage());
+        }
+    }
+
+    public function success(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+        if (!$sessionId) return redirect('/rooms');
+
+        $secretKey = config('services.stripe.secret') ?: env('STRIPE_SECRET');
+        \Stripe\Stripe::setApiKey($secretKey);
+        
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $metadata = $session->metadata;
+            return view('room_success', compact('session', 'metadata'));
+        } catch (\Exception $e) {
+            return redirect('/rooms');
+        }
+    }
+    
+    public function receipt(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+        if (!$sessionId) return redirect('/rooms');
+        
+        $secretKey = config('services.stripe.secret') ?: env('STRIPE_SECRET');
+        \Stripe\Stripe::setApiKey($secretKey);
+        
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $metadata = $session->metadata;
+            return view('room_receipt', compact('session', 'metadata'));
+        } catch (\Exception $e) {
+            return redirect('/rooms');
+        }
+    }
+
 
     /*
     |--------------------------------------------------------------------------

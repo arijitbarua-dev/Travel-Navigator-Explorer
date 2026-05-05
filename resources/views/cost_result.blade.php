@@ -214,7 +214,10 @@
         <!-- ACTIONS -->
         <div class="actions">
             <a href="/cost" class="btn-secondary">← Calculate Again</a>
-            <a href="/rooms" class="btn-primary">View All Rooms</a>
+            <a href="/rooms" class="btn-primary" style="background: #6b7280;">View All Rooms</a>
+        </div>
+        <div class="actions" style="margin-top: 12px;">
+            <a href="{{ route('room.booking') }}?room_id={{ $room->id }}" class="btn-primary" style="background: #0f766e;">Book Now</a>
         </div>
 
     </div>
