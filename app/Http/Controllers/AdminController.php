@@ -22,7 +22,8 @@ class AdminController extends Controller
     public function index()
     {
         $requests = RoomRequest::latest()->get();
-        return view('admin.index', compact('requests'));
+        $guideRequests = Guide::where('status', 'pending')->latest()->get();
+        return view('admin.index', compact('requests', 'guideRequests'));
     }
 
     public function show($id)

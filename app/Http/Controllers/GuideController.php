@@ -79,6 +79,6 @@ class GuideController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('guides.index')->with('success', 'Guide application submitted successfully and is now pending admin approval. You will be notified once approved.');
+        return redirect()->route('guide.login')->with('success', 'Guide application submitted successfully and is now pending admin approval. You will be notified once approved.');
     }
 }
