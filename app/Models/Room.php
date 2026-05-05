@@ -13,6 +13,6 @@ class Room extends Model
         'image',
         'sqft',
         'persons',
-		'services',
+        'services',
     ];
 }

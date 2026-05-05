@@ -232,3 +232,4 @@ if (!defined('STRIPE_KEY')) {
 
 Route::post('/guides/{id}/hire', [\App\Http\Controllers\PaymentController::class, 'showPaymentFrontend'])->name('guides.hire')->middleware('auth');
 Route::get('/admin/payment_method_check/{owner_id}/{amount}/{duration}/{package_id}/{session_id}', [\App\Http\Controllers\PaymentController::class, 'paymentMethodCheck']);
+
