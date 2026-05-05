@@ -7,82 +7,92 @@
 
     <!-- Weather Styles (FIXED UI) -->
     <style>
+        body {
+            background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 50%, #deebff 100%);
+        }
+
         .weather-container {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            max-width: 900px;
+            background: linear-gradient(135deg, rgba(236, 253, 245, 0.96), #ffffff);
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+            max-width: 920px;
             margin: auto;
+            border: 1px solid rgba(15, 118, 110, 0.14);
         }
 
         .weather-header {
-            font-size: 26px;
-            margin-bottom: 20px;
+            font-size: 30px;
+            margin-bottom: 22px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 800;
+            color: #0f766e;
         }
 
         .weather-details {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            max-width: 580px;
+            margin-inline: auto;
         }
 
         .weather-details p {
-            margin: 6px 0;
+            margin: 8px 0;
             font-size: 15px;
+            color: #334155;
         }
 
         .temp {
             font-size: 56px;
-            font-weight: bold;
+            font-weight: 900;
             color: #0f766e;
         }
 
         .forecast {
-            margin-top: 25px;
+            margin-top: 30px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+            gap: 16px;
         }
 
         .forecast-day {
-            background: #f1f5f9;
-            padding: 12px;
-            border-radius: 10px;
+            background: rgba(14, 165, 233, 0.08);
+            padding: 16px;
+            border-radius: 20px;
             text-align: center;
-            font-size: 13px;
-            transition: 0.2s;
+            font-size: 14px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            border: 1px solid rgba(56, 189, 248, 0.18);
         }
 
         .forecast-day:hover {
-            background: #e0f2fe;
-            transform: translateY(-2px);
+            background: rgba(14, 165, 233, 0.16);
+            transform: translateY(-3px);
         }
 
         .forecast-day span {
             display: block;
-            margin: 2px 0;
+            margin: 4px 0;
         }
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800 pt-20">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-cyan-50 text-slate-900 pt-20">
 
 <!-- HEADER -->
-<header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-xl bg-white/30 border border-white/20 shadow-2xl">
+<header class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-[90%] rounded-3xl backdrop-blur-xl bg-white/80 border border-slate-200 shadow-2xl">
     <div class="container mx-auto flex justify-between items-center px-6 py-3">
 
         <h1 class="text-2xl font-bold text-blue-600">
             Travel<span class="text-gray-800">Navigator</span>
         </h1>
 
-        <nav class="hidden md:flex items-center space-x-8 text-gray-700">
-            <a href="{{ route('home') }}">Home</a>
-            <a href="{{ route('guides.index') }}">Book Guide</a>
-            <a href="{{ route('currency.index') }}">Currency</a>
-            <a href="{{ route('blogs.index') }}">Blogs</a>
-            <a href="{{ route('home') }}#contact">Contact</a>
+        <nav class="hidden md:flex items-center space-x-6 text-slate-700">
+            <a href="{{ route('home') }}" class="hover:text-teal-600 transition">Home</a>
+            <a href="{{ route('guides.index') }}" class="hover:text-teal-600 transition">Book Guide</a>
+            <a href="{{ route('currency.index') }}" class="hover:text-teal-600 transition">Currency</a>
+            <a href="{{ route('blogs.index') }}" class="hover:text-teal-600 transition">Blogs</a>
+            <a href="{{ route('home') }}#contact" class="hover:text-teal-600 transition">Contact</a>
         </nav>
 
         <div class="flex items-center space-x-4">
@@ -101,42 +111,42 @@
 </header>
 
 <!-- SEARCH -->
-<section class="container mx-auto mt-32 text-center">
-    <h2 class="text-3xl font-bold mb-8">Find Your Perfect Room</h2>
+<section class="container mx-auto mt-32 text-center max-w-6xl">
+    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-slate-900">Find Your Perfect Room</h2>
 
     <form action="{{ route('dashboard') }}" method="GET"
-          class="bg-white p-6 rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-5 gap-4">
+          class="bg-white/95 border border-slate-200 p-6 rounded-3xl shadow-xl grid grid-cols-1 md:grid-cols-5 gap-4">
 
         <div>
-            <label class="text-sm text-gray-600">Budget</label>
-            <div class="flex gap-2 mt-1">
+            <label class="text-sm text-slate-500 font-medium">Budget</label>
+            <div class="flex gap-3 mt-2">
                 <input type="number" name="min_price" placeholder="Min"
                        value="{{ request('min_price') }}"
-                       class="w-full p-2 border rounded">
+                       class="w-full p-3 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-transparent">
 
                 <input type="number" name="max_price" placeholder="Max"
                        value="{{ request('max_price') }}"
-                       class="w-full p-2 border rounded">
+                       class="w-full p-3 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-transparent">
             </div>
         </div>
 
         <div>
-            <label class="text-sm text-gray-600">Check In</label>
+            <label class="text-sm text-slate-500 font-medium">Check In</label>
             <input type="date" name="checkin"
                    value="{{ request('checkin') }}"
-                   class="w-full p-2 border rounded mt-1">
+                   class="w-full p-3 border border-slate-200 rounded-2xl mt-2 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-transparent">
         </div>
 
         <div>
-            <label class="text-sm text-gray-600">Check Out</label>
+            <label class="text-sm text-slate-500 font-medium">Check Out</label>
             <input type="date" name="checkout"
                    value="{{ request('checkout') }}"
-                   class="w-full p-2 border rounded mt-1">
+                   class="w-full p-3 border border-slate-200 rounded-2xl mt-2 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-transparent">
         </div>
 
         <div>
-            <label class="text-sm text-gray-600">Guests</label>
-            <select name="guests" class="w-full p-2 border rounded mt-1">
+            <label class="text-sm text-slate-500 font-medium">Guests</label>
+            <select name="guests" class="w-full p-3 border border-slate-200 rounded-2xl mt-2 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:border-transparent">
                 <option value="">Any</option>
                 <option value="1" {{ request('guests') == 1 ? 'selected' : '' }}>1 Guest</option>
                 <option value="2" {{ request('guests') == 2 ? 'selected' : '' }}>2 Guests</option>
@@ -147,7 +157,7 @@
 
         <div class="flex items-end">
             <button type="submit"
-                    class="w-full bg-teal-500 text-white py-2 rounded-full hover:bg-teal-600">
+                    class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-3 rounded-full shadow-lg hover:from-teal-600 hover:to-cyan-600 transition">
                 Search Rooms
             </button>
         </div>
@@ -164,24 +174,26 @@
     @else
     <div class="grid md:grid-cols-3 gap-6">
         @foreach($rooms as $room)
-        <div class="bg-white rounded-xl shadow p-4">
+        <div class="bg-white/95 rounded-3xl border border-slate-200 shadow-xl overflow-hidden transform transition hover:-translate-y-1 hover:shadow-2xl">
 
             @if($room->image)
                 <img src="{{ asset('storage/' . $room->image) }}"
-                     class="w-full h-40 object-cover rounded mb-3">
+                     class="w-full h-44 object-cover rounded-t-3xl mb-3">
             @endif
 
-            <h2 class="text-lg font-semibold">{{ $room->name }}</h2>
-            <p class="text-teal-600 font-bold">৳ {{ number_format($room->price) }}</p>
+            <div class="p-5">
+                <h2 class="text-xl font-semibold text-slate-900">{{ $room->name }}</h2>
+                <p class="text-teal-600 font-bold text-lg mt-1">৳ {{ number_format($room->price) }}</p>
 
-            <p class="text-sm text-gray-500 mt-2">
-                {{ \Illuminate\Support\Str::limit($room->description, 80) }}
-            </p>
+                <p class="text-sm text-slate-500 mt-3 leading-6">
+                    {{ \Illuminate\Support\Str::limit($room->description, 90) }}
+                </p>
 
-            <a href="/rooms/{{ $room->id }}"
-               class="block mt-4 text-center bg-teal-500 text-white py-2 rounded hover:bg-teal-600">
-                View Details
-            </a>
+                <a href="/rooms/{{ $room->id }}"
+                   class="block mt-6 text-center bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-3 rounded-2xl shadow-lg hover:from-teal-600 hover:to-cyan-600 transition">
+                    View Details
+                </a>
+            </div>
         </div>
         @endforeach
     </div>
@@ -189,6 +201,45 @@
 </section>
 @endif
 
+
+<!-- PROFILE CARD -->
+<section class="container mx-auto mt-10 px-4 max-w-6xl">
+    <div class="bg-white/95 rounded-3xl border border-slate-200 shadow-2xl p-6 flex flex-col md:flex-row items-center gap-6 backdrop-blur-sm">
+
+        <!-- PROFILE CARD -->
+
+<section class="container mx-auto mt-10 px-4">
+    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
+
+```
+    <!-- Avatar -->
+    <div class="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-3xl font-bold">
+        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+    </div>
+
+    <!-- User Info -->
+    <div class="flex-1 text-center md:text-left">
+        <h2 class="text-2xl font-bold text-gray-800">
+            {{ auth()->user()->name }}
+        </h2>
+
+        <p class="text-gray-500">
+            {{ auth()->user()->email }}
+        </p>
+
+        <p class="mt-2 text-sm text-gray-400">
+            Welcome back 👋 Ready to explore new destinations?
+        </p>
+    </div>
+
+    
+
+</div>
+```
+
+</section>
+
+</section>
 <!-- DESTINATIONS -->
 <section class="container mx-auto mt-10">
     <div class="flex justify-between items-center mb-6 px-2">
@@ -242,15 +293,15 @@ function loadDestinations() {
             data.forEach(dest => {
                 const card = document.createElement('div');
 
-                card.className = "bg-white rounded-xl shadow overflow-hidden hover:scale-105 transition cursor-pointer";
+                card.className = "bg-white/95 rounded-3xl border border-slate-200 shadow-xl overflow-hidden hover:-translate-y-1 hover:shadow-2xl transition-transform duration-300 cursor-pointer";
 
                 card.innerHTML = `
                     <img src="${dest.image ?? 'https://via.placeholder.com/300'}"
-                         class="w-full h-40 object-cover">
+                         class="w-full h-44 object-cover">
                     <div class="p-4">
-                        <h4 class="font-semibold text-lg">${dest.name}</h4>
-                        <p class="text-sm text-gray-500">${dest.category ?? ''}</p>
-                        <p class="text-yellow-500 text-sm font-semibold mt-1">
+                        <h4 class="font-semibold text-lg text-slate-900">${dest.name}</h4>
+                        <p class="text-sm text-slate-500 mt-1">${dest.category ?? ''}</p>
+                        <p class="text-yellow-500 text-sm font-semibold mt-4">
                             ⭐ ${dest.rating ?? 0} / 5
                         </p>
                     </div>
@@ -289,3 +340,38 @@ fetch(apiUrl)
 
 </body>
 </html>
+@if(isset($booking))
+<div class="text-center mt-6">
+    <h3 class="text-xl font-bold text-gray-700">Your Stay Countdown</h3>
+    <div id="countdown" class="text-2xl font-semibold text-teal-600 mt-2"></div>
+</div>
+
+<script>
+    const startTime = new Date("{{ $booking->booking_time ?? now() }}").getTime();
+    const nights = {{ $booking->nights ?? 1 }};
+    const duration = nights * 24 * 60 * 60 * 1000;
+    const endTime = startTime + duration;
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        if (distance <= 0) {
+            document.getElementById("countdown").innerHTML = "Stay Completed";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML =
+            `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+</script>
+@endif
+

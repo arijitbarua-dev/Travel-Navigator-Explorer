@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BlogController;
@@ -32,7 +33,6 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-
 /*
 |--------------------------------------------------------------------------
 | Destinations
@@ -44,7 +44,7 @@ Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('
 
 /*
 |--------------------------------------------------------------------------
-| Guides (Code 1 Feature)
+| Guides
 |--------------------------------------------------------------------------
 */
 Route::get('/guides', [GuideController::class, 'index'])->name('guides.index');
@@ -53,8 +53,9 @@ Route::post('/guides', [GuideController::class, 'store'])->name('guides.store');
 Route::get('/guides/{id}', [GuideController::class, 'show'])->name('guides.show');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/guides/{id}/hire', [BookingController::class, 'store'])->name('guides.hire');
+    Route::post('/guides/{id}/hire', [PaymentController::class, 'showPaymentFrontend'])->name('guides.hire');
     Route::post('/guides/{id}/reviews', [ReviewController::class, 'store'])->name('guides.reviews.store');
+
     Route::get('/guides/{id}/chat', [MessageController::class, 'show'])->name('guides.chat');
     Route::get('/guides/{id}/messages', [MessageController::class, 'index']);
     Route::post('/guides/{id}/messages', [MessageController::class, 'store']);
@@ -62,23 +63,22 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/explore', [ExploreController::class, 'index'])->name('explore.index');
 
-
 /*
 |--------------------------------------------------------------------------
-| Rooms (CRUD + Details)
+| Rooms
 |--------------------------------------------------------------------------
 */
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::post('/rooms', [RoomController::class, 'store']);
-Route::get('/rooms/delete/{id}', [RoomController::class, 'delete']);
 Route::get('/rooms/edit/{id}', [RoomController::class, 'edit']);
 Route::post('/rooms/update/{id}', [RoomController::class, 'update']);
+Route::delete('/rooms/{id}', [RoomController::class, 'delete']);
 Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
+
 Route::get('/room/booking', [RoomController::class, 'bookingForm'])->name('room.booking');
 Route::post('/room/checkout', [RoomController::class, 'checkout'])->name('room.checkout');
 Route::get('/room/success', [RoomController::class, 'success'])->name('room.success');
 Route::get('/room/receipt', [RoomController::class, 'receipt'])->name('room.receipt');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -88,15 +88,13 @@ Route::get('/room/receipt', [RoomController::class, 'receipt'])->name('room.rece
 Route::get('/cost', [RoomController::class, 'costForm']);
 Route::post('/cost/calculate', [RoomController::class, 'calculateCost']);
 
-
 /*
 |--------------------------------------------------------------------------
-| Travel Budget (Multiple Instances preserved)
+| Travel Budget
 |--------------------------------------------------------------------------
 */
 Route::get('/travel-budget', [RoomController::class, 'travelBudgetForm']);
 Route::post('/travel-budget/calculate', [RoomController::class, 'travelBudgetCalculate']);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -106,16 +104,14 @@ Route::post('/travel-budget/calculate', [RoomController::class, 'travelBudgetCal
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
 
-
 /*
 |--------------------------------------------------------------------------
-| Hotels (Multiple Instances preserved)
+| Hotels
 |--------------------------------------------------------------------------
 */
 Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
 Route::post('/hotels', [HotelController::class, 'store']);
 Route::delete('/hotels/{id}', [HotelController::class, 'destroy']);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -132,44 +128,35 @@ Route::get('/admin/logout', [AdminAuthController::class, 'logout']);
 
 /*
 |--------------------------------------------------------------------------
-| Guide Auth (Code 1 Feature)
+| Guide Auth
 |--------------------------------------------------------------------------
 */
 Route::get('/guide/login', [GuideAuthController::class, 'showLogin'])->name('guide.login');
 Route::post('/guide/login', [GuideAuthController::class, 'login']);
 Route::get('/guide/logout', [GuideAuthController::class, 'logout'])->name('guide.logout');
+
 Route::get('/guide/dashboard', [GuideAuthController::class, 'dashboard'])->name('guide.dashboard');
 Route::get('/guide/booking/confirm/{id}', [GuideAuthController::class, 'confirmBooking'])->name('guide.booking.confirm');
 Route::get('/guide/booking/cancel/{id}', [GuideAuthController::class, 'cancelBooking'])->name('guide.booking.cancel');
 Route::get('/guide/booking/complete/{id}', [GuideAuthController::class, 'completeBooking'])->name('guide.booking.complete');
 Route::get('/guide/chat/{email}', [GuideAuthController::class, 'chatWithGuest'])->name('guide.chat.with.guest');
 
-
 /*
 |--------------------------------------------------------------------------
 | Admin Panel
 |--------------------------------------------------------------------------
 */
-Route::get('/admin/dashboard', [AdminController::class, 'index']);
-Route::get('/admin/room/{id}', [AdminController::class, 'show']);
-Route::get('/admin/approve/{id}', [AdminController::class, 'approve']);
-Route::get('/admin/reject/{id}', [AdminController::class, 'reject']);
-Route::get('/admin/guides', [AdminController::class, 'guides']);
-Route::get('/admin/guides/{id}', [AdminController::class, 'showGuide']);
-Route::get('/admin/guides/{id}/approve', [AdminController::class, 'approveGuide']);
-Route::get('/admin/guides/{id}/reject', [AdminController::class, 'rejectGuide']);
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index']);
+    Route::get('/admin/room/{id}', [AdminController::class, 'show']);
+    Route::get('/admin/approve/{id}', [AdminController::class, 'approve']);
+    Route::get('/admin/reject/{id}', [AdminController::class, 'reject']);
 
-/* Repeated Blocks from your Code files */
-Route::get('/travel-budget', [RoomController::class, 'travelBudgetForm']);
-Route::post('/travel-budget/calculate', [RoomController::class, 'travelBudgetCalculate']);
-
-Route::get('/hotels', function () {
-    return view('hotels');
-})->name('hotels.index');
-
-Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
-Route::post('/hotels', [HotelController::class, 'store']);
-Route::delete('/hotels/{id}', [HotelController::class, 'destroy']);
+    Route::get('/admin/guides', [AdminController::class, 'guides']);
+    Route::get('/admin/guides/{id}', [AdminController::class, 'showGuide']);
+    Route::get('/admin/guides/{id}/approve', [AdminController::class, 'approveGuide']);
+    Route::get('/admin/guides/{id}/reject', [AdminController::class, 'rejectGuide']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -184,10 +171,9 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 /*
 |--------------------------------------------------------------------------
-| Guide Booking & Payment (Code 2 & 3 Feature)
+| Booking & Payment
 |--------------------------------------------------------------------------
 */
 Route::get('/booking', [PaymentController::class, 'showBookingForm'])->name('booking.form');
@@ -196,19 +182,17 @@ Route::get('/booking/success', [PaymentController::class, 'success'])->name('boo
 Route::get('/booking/cancel', [PaymentController::class, 'cancel'])->name('booking.cancel');
 Route::get('/booking/receipt/{id}', [PaymentController::class, 'receipt'])->name('booking.receipt');
 
-
 /*
 |--------------------------------------------------------------------------
-| Currency Converter (Code 2 & 3 Feature)
+| Currency
 |--------------------------------------------------------------------------
 */
 Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
 Route::post('/currency/convert', [CurrencyController::class, 'convert'])->name('currency.convert');
 
-
 /*
 |--------------------------------------------------------------------------
-| Dashboard (WITH SEARCH — Option 2)
+| Dashboard
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', [RoomController::class, 'search'])
@@ -217,44 +201,32 @@ Route::get('/dashboard', [RoomController::class, 'search'])
 
 /*
 |--------------------------------------------------------------------------
-| Gallery API (Code 2 & 3 Feature)
+| API
 |--------------------------------------------------------------------------
 */
 Route::get('/api/random-destinations', [DestinationController::class, 'random']);
 
-// Appended to support the payment frontend views
-if (!function_exists('base_url')) {
-    function base_url($path = '') {
-        return rtrim(url($path), '/');
-    }
-}
-
-if (!defined('STRIPE_KEY')) {
-    define('STRIPE_KEY', config('services.stripe.key') ?: env('STRIPE_KEY', ''));
-}
-
-Route::post('/guides/{id}/hire', [\App\Http\Controllers\PaymentController::class, 'showPaymentFrontend'])->name('guides.hire')->middleware('auth');
-Route::get('/admin/payment_method_check/{owner_id}/{amount}/{duration}/{package_id}/{session_id}', [\App\Http\Controllers\PaymentController::class, 'paymentMethodCheck']);
-
+/*
+|--------------------------------------------------------------------------
+| Extra Features
+|--------------------------------------------------------------------------
+*/
 Route::get('/route-guide', [RouteGuideController::class, 'index']);
 Route::post('/route-guide/calculate', [RouteGuideController::class, 'calculate']);
+
 Route::get('/chat/{user_id}', [ChatController::class, 'index']);
 Route::post('/chat/send', [ChatController::class, 'send']);
 
-
-Route::get('/manager/dashboard', function () {
-    return view('manager_dashboard');
-});
-Route::get('/manager/dashboard', function () {
-    return view('manager_dashboard');
-});
-
+/*
+|--------------------------------------------------------------------------
+| Manager
+|--------------------------------------------------------------------------
+*/
 Route::get('/manager/login', function () {
     return view('manager_login');
 });
 
 Route::post('/manager/login', function (Request $request) {
-
     $credentials = $request->only('email', 'password');
 
     if (Auth::attempt($credentials)) {
@@ -263,3 +235,7 @@ Route::post('/manager/login', function (Request $request) {
 
     return back()->withErrors(['Invalid login']);
 })->name('manager.login.submit');
+
+Route::get('/manager/dashboard', function () {
+    return view('manager_dashboard');
+});

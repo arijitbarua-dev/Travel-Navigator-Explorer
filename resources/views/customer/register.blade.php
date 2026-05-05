@@ -17,6 +17,7 @@
 
         <input type="email" name="email" placeholder="Email"
             class="w-full mb-3 p-2 border rounded" required>
+            
 
         <input type="password" name="password" placeholder="Password"
             class="w-full mb-4 p-2 border rounded" required>
