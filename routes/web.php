@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BlogController;
@@ -17,6 +18,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\RouteGuideController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,3 +235,31 @@ if (!defined('STRIPE_KEY')) {
 
 Route::post('/guides/{id}/hire', [\App\Http\Controllers\PaymentController::class, 'showPaymentFrontend'])->name('guides.hire')->middleware('auth');
 Route::get('/admin/payment_method_check/{owner_id}/{amount}/{duration}/{package_id}/{session_id}', [\App\Http\Controllers\PaymentController::class, 'paymentMethodCheck']);
+
+Route::get('/route-guide', [RouteGuideController::class, 'index']);
+Route::post('/route-guide/calculate', [RouteGuideController::class, 'calculate']);
+Route::get('/chat/{user_id}', [ChatController::class, 'index']);
+Route::post('/chat/send', [ChatController::class, 'send']);
+
+
+Route::get('/manager/dashboard', function () {
+    return view('manager_dashboard');
+});
+Route::get('/manager/dashboard', function () {
+    return view('manager_dashboard');
+});
+
+Route::get('/manager/login', function () {
+    return view('manager_login');
+});
+
+Route::post('/manager/login', function (Request $request) {
+
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        return redirect('/manager/dashboard');
+    }
+
+    return back()->withErrors(['Invalid login']);
+})->name('manager.login.submit');
