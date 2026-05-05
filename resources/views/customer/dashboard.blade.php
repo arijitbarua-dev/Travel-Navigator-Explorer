@@ -204,41 +204,55 @@
 
 <!-- PROFILE CARD -->
 <section class="container mx-auto mt-10 px-4 max-w-6xl">
-    <div class="bg-white/95 rounded-3xl border border-slate-200 shadow-2xl p-6 flex flex-col md:flex-row items-center gap-6 backdrop-blur-sm">
+    <div class="bg-white/95 rounded-3xl border border-slate-200 shadow-2xl p-8 flex flex-col md:flex-row items-center gap-8 backdrop-blur-sm relative overflow-hidden">
+        <!-- Decorative Background -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-100 to-cyan-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4"></div>
 
-        <!-- PROFILE CARD -->
+        <!-- Avatar -->
+        <div class="relative z-10 w-32 h-32 rounded-full bg-gradient-to-tr from-teal-500 to-cyan-400 flex items-center justify-center text-white text-5xl font-extrabold shadow-lg border-4 border-white">
+            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            <div class="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
+        </div>
 
-<section class="container mx-auto mt-10 px-4">
-    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
+        <!-- User Info -->
+        <div class="relative z-10 flex-1 text-center md:text-left">
+            <h2 class="text-3xl font-bold text-slate-800 mb-1">
+                {{ auth()->user()->name }}
+            </h2>
+            <p class="text-teal-600 font-medium mb-4">Travel Enthusiast</p>
 
-```
-    <!-- Avatar -->
-    <div class="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-3xl font-bold">
-        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            <div class="flex flex-col md:flex-row gap-4 md:gap-8 text-slate-600">
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>{{ auth()->user()->email }}</span>
+                </div>
+                @if(auth()->user()->phone)
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    <span>{{ auth()->user()->phone }}</span>
+                </div>
+                @endif
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Joined {{ auth()->user()->created_at->format('M Y') }}</span>
+                </div>
+            </div>
+            
+            @if(isset($booking))
+            <div class="mt-6 bg-white/60 p-4 rounded-2xl border border-teal-100 inline-block shadow-sm backdrop-blur-sm">
+                <p class="text-xs text-teal-600 mb-1 uppercase font-bold tracking-wider">Upcoming Stay Countdown</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></div>
+                    <span id="profile-countdown" class="text-xl font-bold text-slate-800 font-mono tracking-tight">Calculating...</span>
+                </div>
+            </div>
+            @else
+            <p class="mt-6 text-sm text-slate-500 bg-slate-50 p-3 rounded-xl inline-block border border-slate-100">
+                Welcome back 👋 Ready to explore new destinations?
+            </p>
+            @endif
+        </div>
     </div>
-
-    <!-- User Info -->
-    <div class="flex-1 text-center md:text-left">
-        <h2 class="text-2xl font-bold text-gray-800">
-            {{ auth()->user()->name }}
-        </h2>
-
-        <p class="text-gray-500">
-            {{ auth()->user()->email }}
-        </p>
-
-        <p class="mt-2 text-sm text-gray-400">
-            Welcome back 👋 Ready to explore new destinations?
-        </p>
-    </div>
-
-    
-
-</div>
-```
-
-</section>
-
 </section>
 <!-- DESTINATIONS -->
 <section class="container mx-auto mt-10">
@@ -341,23 +355,15 @@ fetch(apiUrl)
 </body>
 </html>
 @if(isset($booking))
-<div class="text-center mt-6">
-    <h3 class="text-xl font-bold text-gray-700">Your Stay Countdown</h3>
-    <div id="countdown" class="text-2xl font-semibold text-teal-600 mt-2"></div>
-</div>
-
 <script>
-    const startTime = new Date("{{ $booking->booking_time ?? now() }}").getTime();
-    const nights = {{ $booking->nights ?? 1 }};
-    const duration = nights * 24 * 60 * 60 * 1000;
-    const endTime = startTime + duration;
+    const endTime = new Date("{{ $booking->end_date }}").getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = endTime - now;
 
         if (distance <= 0) {
-            document.getElementById("countdown").innerHTML = "Stay Completed";
+            document.getElementById("profile-countdown").innerHTML = "Stay Completed";
             return;
         }
 
@@ -366,8 +372,8 @@ fetch(apiUrl)
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById("countdown").innerHTML =
-            `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+        document.getElementById("profile-countdown").innerHTML =
+            `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     updateCountdown();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\RoomRequest;
+use App\Models\RoomBooking;
 
 class RoomController extends Controller
 {
@@ -41,12 +42,20 @@ class RoomController extends Controller
 
         // If no filters → don't show all rooms immediately (optional UX choice)
         if (!$request->hasAny(['min_price', 'max_price', 'guests', 'checkin', 'checkout'])) {
-            return view('customer.dashboard');
+            $booking = auth()->check() ? RoomBooking::where('user_id', auth()->id())
+                ->where('payment_status', 'completed')
+                ->latest()
+                ->first() : null;
+            return view('customer.dashboard', compact('booking'));
         }
 
         $rooms = $query->get();
+        $booking = auth()->check() ? RoomBooking::where('user_id', auth()->id())
+            ->where('payment_status', 'completed')
+            ->latest()
+            ->first() : null;
 
-        return view('customer.dashboard', compact('rooms'));
+        return view('customer.dashboard', compact('rooms', 'booking'));
     }
 
 
@@ -141,6 +150,17 @@ class RoomController extends Controller
                 ],
             ]);
 
+            RoomBooking::create([
+                'user_id' => auth()->id(),
+                'room_id' => $room->id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'nights' => $numDays,
+                'total_amount' => $totalAmount,
+                'payment_status' => 'pending',
+                'stripe_session_id' => $session->id,
+            ]);
+
             return redirect($session->url);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Payment failed: ' . $e->getMessage());
@@ -158,6 +178,12 @@ class RoomController extends Controller
         try {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
             $metadata = $session->metadata;
+            
+            $booking = RoomBooking::where('stripe_session_id', $sessionId)->first();
+            if ($booking) {
+                $booking->update(['payment_status' => 'completed']);
+            }
+            
             return view('room_success', compact('session', 'metadata'));
         } catch (\Exception $e) {
             return redirect('/rooms');
