@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\BlogController;
@@ -41,7 +43,7 @@ Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('
 
 /*
 |--------------------------------------------------------------------------
-| Guides (Code 1 Feature)
+| Guides
 |--------------------------------------------------------------------------
 */
 Route::get('/guides', [GuideController::class, 'index'])->name('guides.index');
@@ -50,7 +52,7 @@ Route::post('/guides', [GuideController::class, 'store'])->name('guides.store');
 Route::get('/guides/{id}', [GuideController::class, 'show'])->name('guides.show');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/guides/{id}/hire', [BookingController::class, 'store'])->name('guides.hire');
+    Route::post('/guides/{id}/hire', [PaymentController::class, 'showPaymentFrontend'])->name('guides.hire');
     Route::post('/guides/{id}/reviews', [ReviewController::class, 'store'])->name('guides.reviews.store');
     Route::get('/guides/{id}/chat', [MessageController::class, 'show'])->name('guides.chat');
     Route::get('/guides/{id}/messages', [MessageController::class, 'index']);
