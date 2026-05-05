@@ -133,18 +133,62 @@
             <div class="space-y-6">
                 @auth
                     <section class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
-                        <h3 class="text-xl font-semibold mb-4">Hire this guide</h3>
-                        <form action="{{ route('guides.hire', $guide->id) }}" method="post" class="space-y-4">
+                        <h3 class="text-xl font-semibold mb-2">Hire this guide</h3>
+                        <p class="text-sm text-slate-500 mb-4">Select your travel dates and proceed to secure card payment via Stripe.</p>
+                        <form action="{{ route('guides.hire', $guide->id) }}" method="post" class="space-y-4" id="hireForm">
                             @csrf
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700">Preferred date</label>
-                                <input type="date" name="date" value="{{ old('date') }}" class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700">Start Date *</label>
+                                    <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}"
+                                           min="{{ date('Y-m-d') }}" required
+                                           onchange="calculateCost()"
+                                           class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700">End Date *</label>
+                                    <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}"
+                                           min="{{ date('Y-m-d', strtotime('+1 day')) }}" required
+                                           onchange="calculateCost()"
+                                           class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition">
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700">Notes</label>
-                                <textarea name="notes" rows="4" class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3">{{ old('notes') }}</textarea>
+                                <label class="block text-sm font-medium text-slate-700">Notes (optional)</label>
+                                <textarea name="notes" rows="3" class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition" placeholder="Any special requests or preferences...">{{ old('notes') }}</textarea>
                             </div>
-                            <button type="submit" class="w-full inline-flex justify-center px-5 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">Hire Guide</button>
+
+                            <!-- Cost Preview -->
+                            <div id="costPreview" class="hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 p-5 space-y-3 transition-all duration-300">
+                                <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wide">Booking Summary</h4>
+                                <div class="flex justify-between text-sm text-slate-600">
+                                    <span>Guide</span>
+                                    <span class="font-medium text-slate-800">{{ $guide->name }}</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-slate-600">
+                                    <span>Rate</span>
+                                    <span class="font-medium text-slate-800">৳ {{ number_format($guide->price_per_day, 2) }} / day</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-slate-600">
+                                    <span>Duration</span>
+                                    <span class="font-medium text-slate-800" id="previewDays">—</span>
+                                </div>
+                                <div class="border-t border-blue-200 pt-3 flex justify-between items-center">
+                                    <span class="text-sm font-bold text-slate-700">Total (BDT)</span>
+                                    <span class="text-2xl font-bold text-blue-600" id="previewTotal">৳ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-400">
+                                    <span>Approx. USD</span>
+                                    <span id="previewUsd">≈ $0.00</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="submitBtn" disabled
+                                    class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold hover:from-blue-700 hover:to-cyan-600 transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                Proceed to Payment →
+                            </button>
+                            <p class="text-xs text-center text-slate-400">Secure payment processed by Stripe. Your card info is never stored on our servers.</p>
                         </form>
                     </section>
 
@@ -186,5 +230,44 @@
             </div>
         </div>
     </div>
+
+<script>
+    const guidePrice = {{ $guide->price_per_day }};
+    const bdtToUsd = 110; // approximate conversion rate
+
+    function calculateCost() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate   = document.getElementById('end_date').value;
+        const preview   = document.getElementById('costPreview');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (!startDate || !endDate) {
+            preview.classList.add('hidden');
+            submitBtn.disabled = true;
+            return;
+        }
+
+        const start = new Date(startDate);
+        const end   = new Date(endDate);
+        const days  = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+        if (days < 1) {
+            preview.classList.add('hidden');
+            submitBtn.disabled = true;
+            return;
+        }
+
+        const total = guidePrice * days;
+        const totalUsd = (total / bdtToUsd).toFixed(2);
+
+        document.getElementById('previewDays').textContent = days + ' day' + (days > 1 ? 's' : '');
+        document.getElementById('previewTotal').textContent = '৳ ' + total.toLocaleString() + ' + Tax & VAT';
+        document.getElementById('previewUsd').textContent = '≈ $' + totalUsd;
+
+        preview.classList.remove('hidden');
+        submitBtn.disabled = false;
+    }
+</script>
+
 </body>
 </html>

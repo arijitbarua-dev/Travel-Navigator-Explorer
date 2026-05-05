@@ -214,3 +214,17 @@ Route::get('/dashboard', [RoomController::class, 'search'])
 |--------------------------------------------------------------------------
 */
 Route::get('/api/random-destinations', [DestinationController::class, 'random']);
+
+// Appended to support the payment frontend views
+if (!function_exists('base_url')) {
+    function base_url($path = '') {
+        return rtrim(url($path), '/');
+    }
+}
+
+if (!defined('STRIPE_KEY')) {
+    define('STRIPE_KEY', config('services.stripe.key') ?: env('STRIPE_KEY', ''));
+}
+
+Route::post('/guides/{id}/hire', [\App\Http\Controllers\PaymentController::class, 'showPaymentFrontend'])->name('guides.hire')->middleware('auth');
+Route::get('/admin/payment_method_check/{owner_id}/{amount}/{duration}/{package_id}/{session_id}', [\App\Http\Controllers\PaymentController::class, 'paymentMethodCheck']);
